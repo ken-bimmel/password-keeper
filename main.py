@@ -5,6 +5,7 @@ from google.appengine.api import users
 from google.appengine.ext import ndb
 import jinja2
 import webapp2
+import utils
 
 from models import Password
 from handlers.base_handlers import BasePage, BaseAction
@@ -23,19 +24,21 @@ def __init_jinja_env():
 jinja_env = __init_jinja_env()
 
 
-PARENT_KEY = ndb.Key("Entity", "password_root")  # TODO: Make this user specific!
 
 
 class PasswordsPage(BasePage):
     def update_values(self, email, values):
-        query = Password.query(ancestor=PARENT_KEY).order(Password.service)
-        values["password_query"] = query
+        values["password_query"] = utils.get_query_for_all_OBJECTS_for_email(email)
         
     def get_template(self):
         return "templates/password-list.html"
 
 class LoginPage(webapp2.RequestHandler):
     def get(self):
+        user = users.get_current_user()
+        if user:
+            self.redirect("/passwords")
+            return
         template = jinja_env.get_template("templates/login.html")
         values = {"login_url": users.create_login_url("/passwords")}
         self.response.out.write(template.render(values))
@@ -47,7 +50,7 @@ class InsertPasswordAction(BaseAction):
             password_key = ndb.Key(urlsafe=self.request.get("password_entity_key"))
             password = password_key.get()
         else:
-            password = Password(parent=PARENT_KEY)
+            password = Password(parent=utils.get_parent_key_for_email(email))
     
         password.service = self.request.get("service")
         password.username = self.request.get("username")
