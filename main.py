@@ -7,6 +7,7 @@ import jinja2
 import webapp2
 
 from models import Password
+from handlers.base_handlers import BasePage, BaseAction
 
 
 # Jinja environment instance necessary to use Jinja templates.
@@ -25,20 +26,13 @@ jinja_env = __init_jinja_env()
 PARENT_KEY = ndb.Key("Entity", "password_root")  # TODO: Make this user specific!
 
 
-class PasswordsPage(webapp2.RequestHandler):
-    def get(self):
-        user = users.get_current_user()
-        if not user:
-            # raise Exception("Missing user!")
-            self.redirect("/")
-        email = user.email().lower()
+class PasswordsPage(BasePage):
+    def update_values(self, email, values):
         query = Password.query(ancestor=PARENT_KEY).order(Password.service)
-        template = jinja_env.get_template("templates/password-list.html")
-        values = {"user_email": email,
-                  "logout_url": users.create_logout_url("/"),
-                  "password_query": query}
-        self.response.out.write(template.render(values))
-
+        values["password_query"] = query
+        
+    def get_template(self):
+        return "templates/password-list.html"
 
 class LoginPage(webapp2.RequestHandler):
     def get(self):
@@ -47,26 +41,26 @@ class LoginPage(webapp2.RequestHandler):
         self.response.out.write(template.render(values))
         
     
-class InsertPasswordAction(webapp2.RequestHandler):
-  def post(self):
-    if self.request.get("password_entity_key"):
-      password_key = ndb.Key(urlsafe=self.request.get("password_entity_key"))
-      password = password_key.get()
-    else:
-      password = Password(parent=PARENT_KEY)
+class InsertPasswordAction(BaseAction):
+    def handle_post(self, email):
+        if self.request.get("password_entity_key"):
+            password_key = ndb.Key(urlsafe=self.request.get("password_entity_key"))
+            password = password_key.get()
+        else:
+            password = Password(parent=PARENT_KEY)
     
-    password.service = self.request.get("service")
-    password.username = self.request.get("username")
-    password.password = self.request.get("password")
-    password.put()
-    self.redirect(self.request.referer)
+        password.service = self.request.get("service")
+        password.username = self.request.get("username")
+        password.password = self.request.get("password")
+        password.put()
+        self.redirect(self.request.referer)
 
 
-class DeletePasswordAction(webapp2.RequestHandler):
-  def post(self):
-    password_key = ndb.Key(urlsafe=self.request.get("password_to_delete_key"))
-    password_key.delete()
-    self.redirect(self.request.referer)
+class DeletePasswordAction(BaseAction):
+    def handle_post(self, email):
+        password_key = ndb.Key(urlsafe=self.request.get("password_to_delete_key"))
+        password_key.delete()
+        self.redirect(self.request.referer)
 
 
 app = webapp2.WSGIApplication([

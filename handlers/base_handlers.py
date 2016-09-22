@@ -3,7 +3,8 @@ from google.appengine.api import users
 import webapp2
 
 import main
-import utils
+
+from email import email
 
 # Potentially helpful (or not) superclass for *logged in* pages and actions (assumes app.yaml gaurds for login)
 
@@ -44,14 +45,13 @@ class BaseAction(webapp2.RequestHandler):
         if not user:
             raise Exception("Missing user!")
         email = user.email().lower()
-        account_info = utils.get_account_info_for_email(email)  # Remove if not using AccountInfo
-        self.handle_post(user, account_info)  # TODO: Update what is passed to subclass function as needed
+        self.handle_post(email)  # TODO: Update what is passed to subclass function as needed
 
 
     def get(self):
         self.post()  # Action handlers should not use get requests.
 
 
-    def handle_post(self, user, account_info):
-        # Subclasses must override this method to handle the requeest.
+    def handle_post(self, email):
+        # Subclasses must override this method to handle the request.
         raise Exception("Subclass must implement handle_post!")
