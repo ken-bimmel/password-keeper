@@ -1,0 +1,133 @@
+body {
+  background-color: #ddd;
+}
+
+.mdl-layout__header-row {
+  padding: 0 20px;
+}
+
+.container, .mdl-grid {
+  width: 95%;
+}
+
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+@media ( min-width : 1200px) {
+  .container {
+    width: 1152px;
+  }
+  /* Useful for >1200px screens only. */
+  .fab-width-container {
+    position: absolute;
+    height: 100%;
+    left: 50%;
+    margin-left: -576px;
+  }
+  .menu-width-container {
+    position: absolute;
+    width: 1152px;
+    top: 0px;
+  }
+}
+
+.container:before, .container:after {
+  content: " ";
+  display: table;
+}
+
+.container:after {
+  clear: both;
+}
+
+.mdl-card__title {
+  color: #fff;
+  background: bottom right 15% no-repeat #089889;
+  /* color from this grid http://paletton.com/#uid=13f0u0kw0osmUvmuhuGCbjZKZeE */
+}
+
+.mdl-card {
+  width: initial; /* Use the grid system to set the width of the cards */
+  min-height: initial;
+}
+
+.password-card .mdl-card .mdl-card__supporting-text {
+  padding: 8px;
+}
+
+#add-password-fab {
+  position: absolute;
+  z-index: 999;
+  bottom: 15px;
+  right: 15px;
+}
+
+@media ( min-width : 480px) {
+  #add-password-fab {
+    bottom: 50px;
+    right: 50px;
+  }
+}
+
+dialog.mdl-dialog {
+  width: 400px !important;
+  max-width: 90%;
+}
+
+.mdl-dialog__title {
+  font-size: 1.5em;
+}
+
+.delete-password-btn {
+  margin: 8px;
+}
+
+.delete-btn {
+  background: #d00000;
+  color: white;
+  float: left;
+}
+
+.mdl-button.delete-btn:hover, .mdl-button.delete-btn:active, .mdl-button.delete-btn:focus {
+  background: #a00000;
+}
+
+.mdl-textfield {
+  width: 100%;
+}
+
+/* ---------- Login page ------------------- */
+.mdl-card__supporting-text {
+  width: 94%;
+  padding: 3%;
+}
+
+.home-card {
+  margin: 30px 5%;
+}
+
+.home-card .mdl-cell {
+  text-align: center;
+}
+
+#rosefire-login-btn {
+  background-color: #800000;
+  color: white;
+  width: 187px; /* A bit smaller than the Google button to account for the shadow size. */
+  height: 42px;
+}
+
+#google-login-btn {
+  background: #eee url("/static/images/google_signin_btn.png") no-repeat -1px -1px;
+  width: 189px;
+  height: 44px;
+  border-radius: 4px;
+}
+
+#bottom-welcome-text {
+  text-align: center;
+}

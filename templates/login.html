@@ -1,0 +1,27 @@
+{% extends "templates/base_page.html" %} {% block content %}
+
+<div class="home-card mdl-card mdl-shadow--2dp">
+	<div class="mdl-card__title">
+		<h2 class="mdl-card__title-text">Welcome</h2>
+	</div>
+	<div class="mdl-card__supporting-text">
+		<p>
+			Passwords saved to this site use https encryption so saving real passwords here should be perfectly save. However this web app really is just a demo, so perhaps you shouldn't go saving critical personal information here.
+		</p>
+		<div class="mdl-grid">
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet">
+				<a href="{{ login_url }}"> <button id="google-login-btn" class="mdl-button mdl-js-button mdl-js-ripple-effect"></button> </a>
+			</div>
+			<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet">
+				<button id="rosefire-login-btn" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+					Rosefire Login
+				</button>
+			</div>
+		</div>
+		<p id="bottom-welcome-text">
+			In order to start saving passwords you first need to sign in. You can use either your Google account or your Rose-Hulman credentials.
+		</p>
+	</div>
+</div>
+
+{% endblock %}

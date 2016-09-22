@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+		<title>Password Keeper</title>
+
+		<!-- Font Awesome has a bunch of handy icons that are easy to use (optional) -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+
+		<!--  Material Design Lite additions (but using Font Awesome icons instead for fun) -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-red.min.css" />
+
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="/static/css/style.css">
+
+		<!-- MDL and jQuery JS -->
+		<script src="/static/js/jquery-2.2.3.min.js"></script>
+		<script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+
+		<!-- Added since the dialog element is still so new. Polyfill to support non-Chrome browsers. -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.4/dialog-polyfill.css">
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.4/dialog-polyfill.js"></script>
+
+		<!-- Custom JS -->
+		<script src="/static/js/main.js"></script>
+
+	</head>
+
+	<body>
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+			<header class="mdl-layout__header">
+				<div class="container mdl-layout__header-row">
+					<span class="mdl-layout-title">Password Keeper</span>
+					<div class="mdl-layout-spacer"></div>
+					{% block headerlinks %}{% endblock %}
+				</div>
+			</header>
+
+			<main class="container mdl-layout__content">
+				{% block content %}{% endblock %}
+			</main>
+
+		</div>
+		<div class="fab-width-container container">
+			{% block fab %}{% endblock %}
+		</div>
+		{% block dialogs %}{% endblock %}
+	</body>
+
+</html>
