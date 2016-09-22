@@ -91,6 +91,16 @@ rh.pk.enableButtons = function() {
   $('.close-delete-password-dialog').click(function() {
     document.querySelector('#delete-password-dialog').close();
   });
+  
+  // Clicked the button to show the logout confirmation screen.
+  $("#logout-btn").click(function() {
+    document.querySelector('#logout-confirmation-dialog').showModal();
+  });
+
+  // Cancel button on the logout confirmation dialog.
+  $('.close-logout-confirmation-dialog').click(function() {
+    document.querySelector('#logout-confirmation-dialog').close();
+  });
 };
 
 
