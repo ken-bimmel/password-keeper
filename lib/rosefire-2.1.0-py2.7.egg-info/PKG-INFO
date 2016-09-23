@@ -1,0 +1,13 @@
+Metadata-Version: 1.1
+Name: rosefire
+Version: 2.1.0
+Summary: A utility to verify Rosefire tokens
+Home-page: https://ada.csse.rose-hulman.edu/rosefire/python-sdk
+Author: Tyler Rockwood
+Author-email: rockwotj@rose-hulman.edu
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 3

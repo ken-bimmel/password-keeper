@@ -1,6 +1,8 @@
 
 from google.appengine.api import users
 import webapp2
+from webapp2_extras import sessions
+import json
 
 import main
 
@@ -8,17 +10,41 @@ from email import email
 
 # Potentially helpful (or not) superclass for *logged in* pages and actions (assumes app.yaml gaurds for login)
 
+class BaseHandler(webapp2.RequestHandler):
+    def dispatch(self):
+        # Get a session store for this request.
+        self.session_store = sessions.get_store(request=self.request)
+
+        try:
+            # Dispatch the request.
+            webapp2.RequestHandler.dispatch(self)
+        finally:
+            # Save all sessions.
+            self.session_store.save_sessions(self.response)
+
+    @webapp2.cached_property
+    def session(self):
+        # Returns a session using the default cookie key.
+        return self.session_store.get_session()
+
 ### Pages ###
-class BasePage(webapp2.RequestHandler):
+class BasePage(BaseHandler):
     """Page handlers should inherit from this one."""
     def get(self):
         user = users.get_current_user()
-        if not user:
+        if not user and "user_info" not in self.session:
             self.redirect("/")
             return
-        email = user.email().lower()
-        values = {"user_email": email,
-                  "logout_url": users.create_logout_url("/")}
+        email = ""
+        values = {}
+        if user:
+            email = user.email().lower()
+            values = {"user_email": email,
+                      "logout_url": users.create_logout_url("/")}
+        else:
+            email = json.loads(self.session["user_info"])["email"]
+            values = {"user_email": email,
+                      "logout_url": "/logout"} 
         
         self.update_values(email, values)  
         template = main.jinja_env.get_template(self.get_template())
@@ -38,13 +64,17 @@ class BasePage(webapp2.RequestHandler):
 
 ### Actions ###
 
-class BaseAction(webapp2.RequestHandler):
+class BaseAction(BaseHandler):
     """ALL action handlers should inherit from this one."""
     def post(self):
         user = users.get_current_user()
-        if not user:
+        if not user and "user_info" not in self.session:
             raise Exception("Missing user!")
-        email = user.email().lower()
+        email = ""
+        if user:
+            email = user.email().lower()
+        else:
+            email = json.loads(self.session["user_info"])["email"]
         self.handle_post(email)  # TODO: Update what is passed to subclass function as needed
 
 

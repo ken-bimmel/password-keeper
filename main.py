@@ -1,5 +1,6 @@
 import logging
 import os
+import json
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -7,9 +8,10 @@ import jinja2
 import webapp2
 import utils
 
+from rosefire import RosefireTokenVerifier
 from models import Password
-from handlers.base_handlers import BasePage, BaseAction
-
+from handlers.base_handlers import BasePage, BaseAction, BaseHandler
+ 
 
 # Jinja environment instance necessary to use Jinja templates.
 def __init_jinja_env():
@@ -24,7 +26,7 @@ def __init_jinja_env():
 jinja_env = __init_jinja_env()
 
 
-
+ROSEFIRE_SECRET = "wUHg1XTo3CsiPdvIyvCD"
 
 class PasswordsPage(BasePage):
     def update_values(self, email, values):
@@ -33,16 +35,32 @@ class PasswordsPage(BasePage):
     def get_template(self):
         return "templates/password-list.html"
 
-class LoginPage(webapp2.RequestHandler):
+class LoginPage(BaseHandler):
     def get(self):
         user = users.get_current_user()
-        if user:
+        if user or "user_info" in self.session:
             self.redirect("/passwords")
             return
         template = jinja_env.get_template("templates/login.html")
         values = {"login_url": users.create_login_url("/passwords")}
         self.response.out.write(template.render(values))
-        
+
+class LoginHandler(BaseHandler):
+    def get(self):
+        if "user_info" not in self.session:
+            token = self.request.get('token')
+            auth_data = RosefireTokenVerifier(ROSEFIRE_SECRET).verify(token)
+            user_info = {"name": auth_data.name,
+                         "username": auth_data.username,
+                         "email": auth_data.email,
+                         "role": auth_data.group}
+            self.session["user_info"] = json.dumps(user_info)
+        self.redirect(uri="/passwords")
+
+class LogoutHandler(BaseHandler):
+    def get(self):
+        del self.session["user_info"]
+        self.redirect(uri="/")
     
 class InsertPasswordAction(BaseAction):
     def handle_post(self, email):
@@ -66,10 +84,18 @@ class DeletePasswordAction(BaseAction):
         self.redirect(self.request.referer)
 
 
+config = {}
+config['webapp2_extras.sessions'] = {
+    # This key is used to encrypt your sessions
+    'secret_key': 'wUHg1XTo3CsiPdvIyvCD',
+}
+
 app = webapp2.WSGIApplication([
     ("/", LoginPage),
+    ("/login", LoginHandler),
+    ("/logout", LogoutHandler),
     ("/passwords", PasswordsPage),
     ("/action/insert-password", InsertPasswordAction),
     ("/action/delete-password", DeletePasswordAction)
-], debug=True)
+], config=config, debug=True)
 

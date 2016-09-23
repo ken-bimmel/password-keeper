@@ -1,0 +1,7 @@
+rosefire.py
+rosefire.egg-info/PKG-INFO
+rosefire.egg-info/SOURCES.txt
+rosefire.egg-info/dependency_links.txt
+rosefire.egg-info/not-zip-safe
+rosefire.egg-info/requires.txt
+rosefire.egg-info/top_level.txt
